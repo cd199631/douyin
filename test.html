@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>一年倒计时人生方格</title>
+  <style>
+    body {
+      background: #121212;
+      color: #fff;
+      font-family: "Segoe UI", Arial, sans-serif;
+      margin: 0; padding: 0;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    h1 { margin-top: 36px; letter-spacing: 3px; font-size: 2.1em;}
+    #grid {
+      display: grid;
+      grid-template-columns: repeat(19, 24px);
+      grid-gap: 5px;
+      margin: 40px 0 24px 0;
+    }
+    .cell {
+      width: 24px; height: 24px; border-radius: 5px;
+      box-shadow: 0 2px 6px rgba(255,255,255,0.05);
+      background: #fff;
+      transition: background 0.5s, transform 0.18s;
+    }
+    .cell.passed {
+      background: #ff2e2e;
+      transform: scale(1.18);
+      box-shadow: 0 0 12px #f00, 0 0 2px #fff;
+      animation: flash 0.36s;
+    }
+    @keyframes flash {
+      0% { background: #fff; }
+      60% { background: #ffb04c; }
+      100% { background: #ff2e2e; }
+    }
+    #counter {
+      font-size: 2em;
+      margin-bottom: 18px;
+      font-weight: bold;
+      letter-spacing: 2px;
+    }
+    button {
+      padding: 10px 32px;
+      font-size: 1.1em;
+      border: none;
+      border-radius: 8px;
+      background: #ff2e2e;
+      color: #fff;
+      cursor: pointer;
+      margin-bottom: 18px;
+      box-shadow: 0 2px 12px #222;
+      letter-spacing: 2px;
+      transition: background 0.2s;
+    }
+    button:active { background: #c50000; }
+    .desc {
+      color: #bbb;
+      font-size: 1.1em;
+      margin-top: 10px;
+      margin-bottom: 30px;
+    }
+  </style>
+</head>
+<body>
+  <h1>一年倒计时人生方格</h1>
+  <div id="counter"></div>
+  <div id="grid"></div>
+  <button id="nextDay">黑掉今天</button>
+  <div class="desc">每天黑掉一格，记录你这一年的每一天。</div>
+  <script>
+    const days = 365;
+    let passed = parseInt(localStorage.getItem('passedDays') || 0, 10);
+
+    const grid = document.getElementById('grid');
+    for(let i=0; i<days; i++){
+      const cell = document.createElement('div');
+      cell.className = 'cell';
+      grid.appendChild(cell);
+    }
+
+    function updateGrid(){
+      document.querySelectorAll('.cell').forEach((cell,i) => {
+        if(i<passed) cell.classList.add('passed');
+        else cell.classList.remove('passed');
+      });
+      document.getElementById('counter').innerText = `Day ${Math.min(passed+1,365)} / 365`;
+    }
+
+    document.getElementById('nextDay').onclick = function(){
+      if(passed<days){
+        passed++;
+        localStorage.setItem('passedDays', passed);
+        updateGrid();
+      }
+    };
+
+    updateGrid();
+  </script>
+</body>
+</html>
